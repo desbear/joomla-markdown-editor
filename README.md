@@ -1,6 +1,10 @@
 # GSS Markdown for Joomla 5
 
-A Markdown-first editor for Joomla 5.2+ and EasyBlog, for authors who already write Markdown:
+A Markdown-first editor for Joomla 5.2+ and EasyBlog, for authors who already write Markdown.
+
+**[⬇ Download the latest version](https://github.com/desbear/joomla-markdown-editor/releases/latest)** (`pkg_gssmarkdown-x.y.z.zip` under *Assets*) · [Install](#install)
+
+
 
 - **Source on the left, preview on the right.** The left pane is CodeMirror 6 with Markdown highlighting; the preview is rendered on the server by the same code that renders the saved article.
 - **Formatting toolbar and shortcuts** that write Markdown (see below), so nobody has to remember the syntax
@@ -19,9 +23,15 @@ Nothing is loaded from a CDN. CodeMirror 6 is **not bundled**: it is the copy Jo
 - Joomla 5.2+ (editor-provider API `onEditorSetup`; core CodeMirror 6 assets). Developed against 5.3.3.
 - PHP 8.1+ with `fileinfo`, `gd` and `dom`; `intl` recommended
 
+## Download
+
+Get the installable package from **[Releases](https://github.com/desbear/joomla-markdown-editor/releases/latest)**: under **Assets**, download `pkg_gssmarkdown-x.y.z.zip`.
+
+Do not use GitHub's green **Code → Download ZIP** button or the *Source code* archives: those contain the repository (sources, tests, build tools), not an installable Joomla package.
+
 ## Install
 
-1. Install `pkg_gssmarkdown-x.y.z.zip` via **System → Install → Extensions**. The three plugins are enabled; the editor is not made anyone's default.
+1. Install `pkg_gssmarkdown-x.y.z.zip` via **System → Install → Extensions → Upload Package File**. The three plugins are enabled; the editor is not made anyone's default.
 2. Choose **Editor - GSS Markdown** per author (**Edit profile → Basic settings → Editor**) or globally.
 3. EasyBlog: set the composer to use the **Joomla editor**.
 4. Open **System - GSS Markdown → Preview** and check that the preview shows the site layout (see below).
