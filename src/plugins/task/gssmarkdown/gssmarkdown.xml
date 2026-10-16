@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<extension type="plugin" group="task" method="upgrade">
+	<name>plg_task_gssmarkdown</name>
+	<version>2.8.2</version>
+	<creationDate>2026-09</creationDate>
+	<author>Galaxy Software Services Corp.</author>
+	<authorUrl>https://www.gss.com.tw</authorUrl>
+	<copyright>(C) 2026 Galaxy Software Services Corp.</copyright>
+	<license>GNU General Public License version 2 or later; see LICENSE.txt</license>
+	<description>PLG_TASK_GSSMARKDOWN_XML_DESCRIPTION</description>
+	<namespace path="src">Gss\Plugin\Task\GssMarkdown</namespace>
+	<files>
+		<folder>forms</folder>
+		<folder plugin="gssmarkdown">services</folder>
+		<folder>src</folder>
+		<folder>language</folder>
+	</files>
+</extension>

@@ -1,0 +1,48 @@
+{
+  "$schema": "https://developer.joomla.org/schemas/json-schema/web_assets.json",
+  "name": "plg_editors_gssmarkdown",
+  "version": "2.8.2",
+  "description": "GSS Markdown editor. CodeMirror 6 is Joomla core's (asset 'codemirror' of plg_editors_codemirror). format.js is in the import map so it is versioned with the page (a stale cached copy can no longer break a newer editor.js).",
+  "license": "GPL-2.0-or-later",
+  "assets": [
+    {
+      "name": "plg_editors_gssmarkdown.editor",
+      "type": "style",
+      "uri": "plg_editors_gssmarkdown/editor.css"
+    },
+    {
+      "name": "plg_editors_gssmarkdown.banner",
+      "type": "script",
+      "uri": "plg_editors_gssmarkdown/banner.js",
+      "dependencies": [
+        "core"
+      ],
+      "attributes": {
+        "type": "module"
+      }
+    },
+    {
+      "name": "plg_editors_gssmarkdown.format",
+      "type": "script",
+      "uri": "plg_editors_gssmarkdown/format.js",
+      "importmap": true,
+      "dependencies": [
+        "codemirror"
+      ]
+    },
+    {
+      "name": "plg_editors_gssmarkdown.editor",
+      "type": "script",
+      "uri": "plg_editors_gssmarkdown/editor.js",
+      "dependencies": [
+        "core",
+        "editors",
+        "codemirror",
+        "plg_editors_gssmarkdown.format"
+      ],
+      "attributes": {
+        "type": "module"
+      }
+    }
+  ]
+}

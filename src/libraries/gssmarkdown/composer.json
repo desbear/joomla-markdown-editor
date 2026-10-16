@@ -1,0 +1,23 @@
+{
+    "name": "gss/gssmarkdown-library",
+    "description": "Runtime dependencies bundled with lib_gssmarkdown. Packages Joomla core already ships are declared as 'replace' so they are not duplicated.",
+    "license": "GPL-2.0-or-later",
+    "type": "library",
+    "require": {
+        "php": ">=8.1",
+        "league/commonmark": "^2.7",
+        "league/html-to-markdown": "^5.1"
+    },
+    "replace": {
+        "psr/event-dispatcher": "*",
+        "symfony/deprecation-contracts": "*",
+        "symfony/polyfill-php80": "*"
+    },
+    "config": {
+        "platform": {
+            "php": "8.1.0"
+        },
+        "optimize-autoloader": true,
+        "sort-packages": true
+    }
+}

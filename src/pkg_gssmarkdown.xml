@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<extension type="package" method="upgrade">
+	<name>GSS Markdown</name>
+	<packagename>gssmarkdown</packagename>
+	<version>2.8.2</version>
+	<creationDate>2026-09</creationDate>
+	<author>Galaxy Software Services Corp.</author>
+	<authorUrl>https://www.gss.com.tw</authorUrl>
+	<copyright>(C) 2026 Galaxy Software Services Corp.</copyright>
+	<license>GNU General Public License version 2 or later; see LICENSE.txt</license>
+	<description>Markdown editor for Joomla 5: CodeMirror 6 source pane (from Joomla core) with a server-rendered preview in the site's own article layout, paste / drop image upload, lossless Markdown round-trip.</description>
+	<scriptfile>script.php</scriptfile>
+	<files folder="packages">
+		<file type="library" id="gssmarkdown">lib_gssmarkdown.zip</file>
+		<file type="plugin" id="gssmarkdown" group="system">plg_system_gssmarkdown.zip</file>
+		<file type="plugin" id="gssmarkdown" group="editors">plg_editors_gssmarkdown.zip</file>
+		<file type="plugin" id="gssmarkdown" group="task">plg_task_gssmarkdown.zip</file>
+	</files>
+</extension>

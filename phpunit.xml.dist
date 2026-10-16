@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
+         bootstrap="tests/bootstrap.php"
+         colors="true"
+         failOnWarning="true"
+         failOnRisky="true">
+    <testsuites>
+        <testsuite name="unit">
+            <directory>tests/Unit</directory>
+        </testsuite>
+    </testsuites>
+    <php>
+        <!-- Path of a Joomla 5.3 installation whose libraries/vendor the tests reuse
+             (InputFilter, Filesystem\Path, svg-sanitize). -->
+        <env name="JOOMLA_ROOT" value="../gss" force="false"/>
+    </php>
+</phpunit>

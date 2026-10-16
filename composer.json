@@ -1,0 +1,22 @@
+{
+    "name": "gss/joomla-gssmarkdown",
+    "description": "Development tooling for the GSS Markdown Joomla package. Runtime dependencies live in src/libraries/gssmarkdown/composer.json.",
+    "license": "GPL-2.0-or-later",
+    "type": "project",
+    "require-dev": {
+        "phpunit/phpunit": "^11.5"
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Gss\\Library\\GssMarkdown\\": "src/libraries/gssmarkdown/src/",
+            "Gss\\Tests\\": "tests/",
+            "Gss\\Plugin\\Editors\\GssMarkdown\\": "src/plugins/editors/gssmarkdown/src/"
+        }
+    },
+    "scripts": {
+        "test": "phpunit"
+    },
+    "config": {
+        "sort-packages": true
+    }
+}

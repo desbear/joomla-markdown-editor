@@ -1,0 +1,15 @@
+{
+  "name": "gssmarkdown-assets",
+  "private": true,
+  "description": "Builds the locally-bundled Prism highlighter (site + preview). CodeMirror 6 is NOT bundled: it comes from Joomla core.",
+  "type": "module",
+  "scripts": {
+    "build": "node build.mjs"
+  },
+  "dependencies": {
+    "prismjs": "1.30.0"
+  },
+  "devDependencies": {
+    "esbuild": "^0.25.0"
+  }
+}

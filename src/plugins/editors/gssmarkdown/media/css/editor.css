@@ -1,0 +1,894 @@
+/* GSS Markdown editor chrome only. The preview's look comes from the site's own
+   article stylesheets inside the frame; nothing here styles content. */
+joomla-editor-gssmarkdown {
+  --gssmd-border: #dadde6;
+  --gssmd-line: #ebedf2;
+  --gssmd-bar: #f7f9fc;
+  --gssmd-icon: #555b66;
+  --gssmd-icon-hover: #1f2329;
+  --gssmd-accent: #4b96e6;
+  --gssmd-muted: #81858f;
+  --gssmd-pane: #fff;
+  display: block;
+  position: relative;
+  container-type: inline-size;
+  border: 1px solid var(--gssmd-border);
+  border-radius: 4px;
+  background: var(--gssmd-pane);
+}
+
+/* Some site / admin stylesheets do not hide [hidden]; the editor must not depend on them. */
+joomla-editor-gssmarkdown [hidden],
+joomla-editor-gssmarkdown .gssmd-file {
+  display: none !important;
+}
+
+/* Editor script did not start: after a grace period, explain instead of a blank box. */
+.gssmd-loadfail {
+  display: none;
+}
+
+joomla-editor-gssmarkdown:not(:defined) .gssmd-loadfail {
+  display: block;
+  margin: 16px;
+  padding: 12px 16px;
+  border: 1px solid #f0c36d;
+  border-radius: 4px;
+  background: #fff8e5;
+  color: #6b4a00;
+  opacity: 0;
+  animation: gssmd-reveal 0s linear 5s forwards;
+}
+
+@keyframes gssmd-reveal {
+  to {
+    opacity: 1;
+  }
+}
+
+joomla-editor-gssmarkdown.is-dark {
+  --gssmd-border: #3a3f4b;
+  --gssmd-line: #30343d;
+  --gssmd-bar: #21252b;
+  --gssmd-icon: #abb2bf;
+  --gssmd-icon-hover: #fff;
+  --gssmd-muted: #8b919c;
+  --gssmd-pane: #282c34;
+  color: #d7dae0;
+}
+
+/* ---- Toolbar ---- */
+.gssmd-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+  position: relative;
+  min-height: 48px;
+  padding: 6px 12px;
+  border-bottom: 1px solid var(--gssmd-line);
+  border-radius: 4px 4px 0 0;
+  background: var(--gssmd-bar);
+}
+
+.gssmd-format {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 2px;
+}
+
+.gssmd-tool {
+  display: inline-grid;
+  place-items: center;
+  position: relative;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  background: transparent;
+  color: var(--gssmd-icon);
+  cursor: pointer;
+}
+
+.gssmd-tool:hover:not(:disabled),
+.gssmd-tool[aria-expanded="true"] {
+  border-color: var(--gssmd-line);
+  background: var(--gssmd-pane);
+  color: var(--gssmd-icon-hover);
+}
+
+.gssmd-tool:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.gssmd-tool:focus-visible,
+.gssmd-switch:focus-visible,
+.gssmd-tab:focus-visible,
+.gssmd-menu-item:focus-visible,
+.gssmd-divider:focus-visible,
+.gssmd-link:focus-visible {
+  outline: 2px solid var(--gssmd-accent);
+  outline-offset: 1px;
+}
+
+.gssmd-icon {
+  display: inline-flex;
+  line-height: 0;
+}
+
+/* The heading tool shows the current level (H2 …) as a small badge. */
+.gssmd-icon.is-active {
+  color: var(--gssmd-accent);
+}
+
+.gssmd-icon[data-level]:not([data-level=""])::after {
+  content: attr(data-level);
+  position: absolute;
+  right: 1px;
+  bottom: 1px;
+  font: 600 9px/1 system-ui, sans-serif;
+  color: var(--gssmd-accent);
+}
+
+.gssmd-sep {
+  width: 1px;
+  height: 18px;
+  margin: 0 8px;
+  background: var(--gssmd-border);
+}
+
+.gssmd-spacer {
+  flex: 1;
+}
+
+.gssmd-toolbar-end {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: 4px;
+  margin-left: auto;
+}
+
+.gssmd-close {
+  flex: none;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 0;
+  border-radius: 4px;
+  background: none;
+  color: inherit;
+  font-size: 20px;
+  line-height: 1;
+  opacity: 0.6;
+  cursor: pointer;
+}
+
+.gssmd-close:hover {
+  opacity: 1;
+  background: rgb(0 0 0 / 6%);
+}
+
+/* ---- Pop-ups: menus and settings ---- */
+.gssmd-menu-anchor {
+  position: relative;
+  display: inline-flex;
+}
+
+.gssmd-popup {
+  position: absolute;
+  z-index: 30;
+  top: calc(100% + 4px);
+  left: 0;
+  padding: 4px 0;
+  border: 1px solid var(--gssmd-border);
+  border-radius: 4px;
+  background: var(--gssmd-pane);
+  box-shadow: 0 6px 18px rgb(0 0 0 / 12%);
+}
+
+.gssmd-popup[hidden] {
+  display: none;
+}
+
+.gssmd-menu {
+  min-width: 11rem;
+  max-height: 22rem;
+  overflow-y: auto;
+}
+
+.gssmd-menu-item {
+  display: block;
+  width: 100%;
+  padding: 6px 14px;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  font-size: 0.875rem;
+  text-align: left;
+  cursor: pointer;
+}
+
+.gssmd-menu-item:hover,
+.gssmd-menu-item:focus {
+  background: var(--gssmd-bar);
+}
+
+/* Heading menu previews the sizes, like classic editors. */
+.gssmd-menu--heading .is-h1 { font-size: 1.5rem; font-weight: 700; }
+.gssmd-menu--heading .is-h2 { font-size: 1.3rem; font-weight: 700; }
+.gssmd-menu--heading .is-h3 { font-size: 1.15rem; font-weight: 700; }
+.gssmd-menu--heading .is-h4 { font-size: 1rem; font-weight: 700; }
+.gssmd-menu--heading .is-h5 { font-size: 0.9rem; font-weight: 700; }
+.gssmd-menu--heading .is-h6 { font-size: 0.8rem; font-weight: 700; }
+
+.gssmd-settings {
+  left: auto;
+  right: 12px;
+  display: grid;
+  gap: 0.625rem;
+  min-width: 17rem;
+  padding: 12px 14px;
+  font-size: 0.875rem;
+}
+
+.gssmd-settings label {
+  display: grid;
+  grid-template-columns: 1fr 9rem;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0;
+}
+
+.gssmd-settings label.gssmd-check {
+  grid-template-columns: auto 1fr;
+}
+
+.gssmd-settings select,
+.gssmd-settings input[type="number"] {
+  width: 100%;
+}
+
+.gssmd-link {
+  justify-self: start;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--gssmd-accent);
+  font: inherit;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+/* ---- Video pop-up ---- */
+.gssmd-video-popup {
+  width: 24rem;
+  max-width: calc(100vw - 32px);
+  padding: 12px 14px;
+  font-size: 0.875rem;
+}
+
+.gssmd-video-label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 500;
+}
+
+.gssmd-video-row {
+  display: flex;
+  gap: 6px;
+}
+
+.gssmd-video-input {
+  flex: 1;
+  min-width: 0;
+  height: 32px;
+  padding: 0 8px;
+  border: 1px solid var(--gssmd-border);
+  border-radius: 4px;
+  background: var(--gssmd-pane);
+  color: inherit;
+  font: inherit;
+}
+
+.gssmd-video-popup > .gssmd-video-input {
+  display: block;
+  box-sizing: border-box;
+  width: 100%;
+  margin-bottom: 6px;
+}
+
+.gssmd-video-insert {
+  height: 32px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 4px;
+  background: var(--gssmd-accent);
+  color: #fff;
+  font: inherit;
+  cursor: pointer;
+}
+
+.gssmd-video-error {
+  margin-top: 6px;
+  color: #b3261e;
+}
+
+.gssmd-video-help {
+  margin-top: 8px;
+  color: var(--gssmd-muted);
+  font-size: 0.8125rem;
+  line-height: 1.5;
+}
+
+/* ---- Convert HTML dialog ---- */
+.gssmd-html-dialog {
+  box-sizing: border-box;
+  width: min(1100px, calc(100vw - 32px));
+  height: min(720px, calc(100vh - 32px));
+  max-width: none;
+  max-height: none;
+  padding: 0;
+  border: 1px solid var(--gssmd-border);
+  border-radius: 8px;
+  background: var(--gssmd-pane);
+  color: var(--gssmd-text, inherit);
+  box-shadow: 0 20px 60px rgb(0 0 0 / 30%);
+}
+
+.gssmd-html-dialog[open] {
+  display: flex;
+  flex-direction: column;
+}
+
+.gssmd-html-dialog::backdrop {
+  background: rgb(0 0 0 / 45%);
+}
+
+.gssmd-html-head {
+  padding: 16px 20px 8px;
+}
+
+.gssmd-html-title {
+  margin: 0 0 4px;
+  font-size: 1.125rem;
+  font-weight: 600;
+}
+
+.gssmd-html-help {
+  margin: 0;
+  color: var(--gssmd-muted);
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+.gssmd-html-panes {
+  display: grid;
+  flex: 1;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  min-height: 0;
+  padding: 8px 20px;
+}
+
+.gssmd-html-pane {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.gssmd-html-box {
+  position: relative;
+  display: flex;
+  flex: 1;
+  min-height: 0;
+}
+
+.gssmd-html-box > .gssmd-html-text {
+  padding-top: 44px; /* room for the floating file button */
+}
+
+/* Floating "choose file" button, top-right corner of the HTML box. */
+.gssmd-html-file {
+  position: absolute;
+  z-index: 1;
+  top: 8px;
+  right: 8px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 28px;
+  padding: 0 10px 0 6px;
+  border: 1px solid var(--gssmd-border);
+  border-radius: 999px;
+  background: var(--gssmd-bar);
+  color: var(--gssmd-icon);
+  font: inherit;
+  font-size: 0.8125rem;
+  line-height: 1;
+  cursor: pointer;
+  box-shadow: 0 1px 3px rgb(0 0 0 / 8%);
+  transition: color 0.15s ease, border-color 0.15s ease;
+}
+
+.gssmd-html-file .gssmd-icon svg {
+  width: 16px;
+  height: 16px;
+}
+
+.gssmd-html-file:hover,
+.gssmd-html-file:focus-visible {
+  border-color: var(--gssmd-accent);
+  color: var(--gssmd-accent);
+  outline: none;
+}
+
+/* Drop mask over the whole HTML box while a file is dragged over the left side. */
+.gssmd-html-mask {
+  position: absolute;
+  z-index: 2;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  border: 2px dashed var(--gssmd-accent);
+  border-radius: 4px;
+  background: color-mix(in srgb, var(--gssmd-accent) 12%, var(--gssmd-pane) 92%);
+  color: var(--gssmd-accent);
+  pointer-events: none;
+}
+
+.gssmd-html-mask[hidden] {
+  display: none;
+}
+
+.gssmd-html-mask-inner {
+  display: grid;
+  justify-items: center;
+  gap: 8px;
+  font-size: 0.9375rem;
+  font-weight: 600;
+}
+
+.gssmd-html-mask-inner .gssmd-icon svg {
+  width: 36px;
+  height: 36px;
+}
+
+.gssmd-html-label {
+  margin-bottom: 6px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+}
+
+.gssmd-html-text {
+  flex: 1;
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 0;
+  padding: 8px 10px;
+  border: 1px solid var(--gssmd-border);
+  border-radius: 4px;
+  background: var(--gssmd-pane);
+  color: inherit;
+  font: 13px/1.5 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  resize: none;
+}
+
+.gssmd-html-foot {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 20px 16px;
+}
+
+.gssmd-html-status {
+  flex: 1;
+  min-height: 1.5em;
+  color: var(--gssmd-muted);
+  font-size: 0.875rem;
+}
+
+.gssmd-html-status[data-kind="warning"] {
+  color: #8a5300;
+}
+
+.gssmd-html-status[data-kind="error"] {
+  color: #b3261e;
+}
+
+joomla-editor-gssmarkdown.is-dark .gssmd-html-status[data-kind="warning"] {
+  color: #e5b567;
+}
+
+joomla-editor-gssmarkdown.is-dark .gssmd-html-status[data-kind="error"] {
+  color: #f28b82;
+}
+
+.gssmd-html-actions {
+  display: flex;
+  gap: 8px;
+}
+
+@media (max-width: 700px) {
+  .gssmd-html-panes {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ---- Scroll switch ---- */
+.gssmd-switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-right: 4px;
+  padding: 4px 6px;
+  border: 0;
+  border-radius: 4px;
+  background: none;
+  color: var(--gssmd-muted);
+  font: inherit;
+  font-size: 0.9375rem;
+  cursor: pointer;
+}
+
+.gssmd-switch[aria-checked="true"] {
+  color: var(--gssmd-accent);
+}
+
+.gssmd-switch-track {
+  position: relative;
+  width: 30px;
+  height: 14px;
+  border-radius: 7px;
+  background: #c9ccd3;
+  transition: background 0.15s;
+}
+
+.gssmd-switch-thumb {
+  position: absolute;
+  top: -3px;
+  left: -2px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 1px 3px rgb(0 0 0 / 30%);
+  transition: transform 0.15s;
+}
+
+.gssmd-switch[aria-checked="true"] .gssmd-switch-track {
+  background: #a6cdf5;
+}
+
+.gssmd-switch[aria-checked="true"] .gssmd-switch-thumb {
+  background: var(--gssmd-accent);
+  transform: translateX(14px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gssmd-switch-track,
+  .gssmd-switch-thumb {
+    transition: none;
+  }
+}
+
+/* ---- Notices ---- */
+.gssmd-notice:empty {
+  display: none;
+}
+
+.gssmd-notice {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 8px 12px 0;
+}
+
+.gssmd-message {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin: 0;
+  padding: 0.5rem 0.75rem;
+}
+
+.gssmd-gate {
+  margin: 8px 12px 0;
+}
+
+.gssmd-gate p {
+  margin-bottom: 0.5rem;
+}
+
+.gssmd-gate .btn {
+  margin-right: 0.5rem;
+}
+
+/* ---- Panes ---- */
+.gssmd-panes {
+  --gssmd-ratio: 0.5;
+  display: grid;
+  grid-template-columns: minmax(0, calc(var(--gssmd-ratio) * 100%)) 5px minmax(0, 1fr);
+  height: var(--gssmd-height, 70vh);
+  min-height: 320px;
+}
+
+.gssmd-panes[data-view="edit"],
+.gssmd-panes[data-view="preview"] {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.gssmd-panes[data-view="edit"] .gssmd-divider,
+.gssmd-panes[data-view="edit"] .gssmd-pane--preview,
+.gssmd-panes[data-view="preview"] .gssmd-divider,
+.gssmd-panes[data-view="preview"] .gssmd-pane--editor {
+  display: none;
+}
+
+.gssmd-pane {
+  position: relative;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.gssmd-pane--editor .cm-editor {
+  height: 100%;
+}
+
+.gssmd-pane--editor .cm-editor.cm-focused {
+  outline: none;
+}
+
+.gssmd-pane--editor .cm-content {
+  padding-top: 16px;
+}
+
+.gssmd-pane--editor .cm-line {
+  padding: 0 20px;
+}
+
+/* Floating copy / paste / save actions, bottom-left of the Markdown pane. */
+.gssmd-pane-actions {
+  position: absolute;
+  z-index: 5;
+  bottom: 10px;
+  left: 10px;
+  display: flex;
+  gap: 2px;
+  padding: 2px;
+  border: 1px solid var(--gssmd-line);
+  border-radius: 6px;
+  background: var(--gssmd-pane);
+  box-shadow: 0 1px 4px rgb(0 0 0 / 8%);
+  opacity: 0.55;
+  transition: opacity 0.15s;
+}
+
+.gssmd-pane-actions:hover,
+.gssmd-pane-actions:focus-within {
+  opacity: 1;
+}
+
+.gssmd-action {
+  display: inline-grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  border: 0;
+  border-radius: 4px;
+  background: none;
+  color: var(--gssmd-icon);
+  cursor: pointer;
+}
+
+.gssmd-action .gssmd-icon svg {
+  width: 16px;
+  height: 16px;
+}
+
+.gssmd-action:hover:not(:disabled) {
+  background: var(--gssmd-bar);
+  color: var(--gssmd-icon-hover);
+}
+
+.gssmd-action:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.gssmd-action:focus-visible {
+  outline: 2px solid var(--gssmd-accent);
+  outline-offset: 1px;
+}
+
+/* Keep the last lines clear of the floating actions. */
+.gssmd-pane--editor .cm-content {
+  padding-bottom: 48px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gssmd-pane-actions {
+    transition: none;
+  }
+}
+
+.gssmd-divider {
+  position: relative;
+  cursor: col-resize;
+  border-right: 1px solid var(--gssmd-line);
+  border-left: 1px solid var(--gssmd-line);
+  background: var(--gssmd-bar);
+  touch-action: none;
+}
+
+/* Sync on: an accent mark in the middle of the divider. */
+.gssmd-panes[data-sync="on"] .gssmd-divider::after {
+  content: "";
+  position: absolute;
+  top: calc(50% - 14px);
+  left: 1px;
+  width: 1px;
+  height: 28px;
+  border-radius: 1px;
+  background: var(--gssmd-accent);
+  box-shadow: 0 0 0 1px var(--gssmd-accent);
+}
+
+.gssmd-panes.is-resizing {
+  user-select: none;
+}
+
+.gssmd-panes.is-resizing .gssmd-frame {
+  pointer-events: none;
+}
+
+.gssmd-pane--preview {
+  background: #fff;
+}
+
+.gssmd-frame-box {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+/* Pane narrower than the site's text column: scroll sideways instead of shrinking. */
+.gssmd-frame-box.is-scrollable {
+  overflow-x: auto;
+}
+
+.gssmd-frame-sizer {
+  height: 1px;
+}
+
+.gssmd-frame {
+  position: absolute;
+  top: 0;
+  left: 0;
+  border: 0;
+  transform-origin: 0 0;
+  background: #fff;
+}
+
+joomla-editor-gssmarkdown.is-disabled .gssmd-pane--editor {
+  opacity: 0.55;
+}
+
+/* ---- Status bar: scope note + state on the left, view tabs on the right ---- */
+.gssmd-statusbar {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  min-height: 42px;
+  padding: 0 12px 0 14px;
+  border-top: 1px solid var(--gssmd-line);
+  border-radius: 0 0 4px 4px;
+  color: var(--gssmd-muted);
+  font-size: 0.8125rem;
+}
+
+.gssmd-scope,
+.gssmd-preview-state {
+  align-self: center;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.gssmd-preview-state:empty {
+  display: none;
+}
+
+.gssmd-preview-state[data-kind="error"] {
+  color: #b3261e;
+  font-weight: 600;
+}
+
+.gssmd-preview-state[data-kind="warning"] {
+  color: #8a5300;
+}
+
+.gssmd-preview-state[data-kind="busy"] {
+  color: var(--gssmd-accent);
+}
+
+.gssmd-tabs {
+  display: flex;
+  flex: none;
+  margin-top: -1px;
+}
+
+.gssmd-tab {
+  min-width: 92px;
+  height: 34px;
+  margin-left: -1px;
+  padding: 0 16px;
+  border: 1px solid var(--gssmd-border);
+  border-radius: 0 0 3px 3px;
+  background: var(--gssmd-bar);
+  color: var(--gssmd-muted);
+  font: inherit;
+  font-size: 0.9375rem;
+  cursor: pointer;
+}
+
+.gssmd-tab[aria-selected="true"] {
+  border-top-color: var(--gssmd-pane);
+  background: var(--gssmd-pane);
+  color: inherit;
+  font-weight: 500;
+}
+
+.gssmd-tab[hidden] {
+  display: none;
+}
+
+@media (max-width: 760px) {
+  .gssmd-scope {
+    display: none;
+  }
+}
+
+/* Narrow editors (e.g. the EasyBlog composer column): keep one toolbar row. */
+@container (max-width: 980px) {
+  .gssmd-toolbar {
+    padding: 6px 8px;
+    gap: 2px;
+  }
+
+  .gssmd-tool {
+    width: 30px;
+    height: 32px;
+  }
+
+  .gssmd-sep {
+    margin: 0 3px;
+  }
+
+  .gssmd-switch-label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+  }
+}
+
+@container (max-width: 700px) {
+  .gssmd-scope {
+    display: none;
+  }
+
+  .gssmd-tab {
+    min-width: 0;
+    padding: 0 10px;
+  }
+}
